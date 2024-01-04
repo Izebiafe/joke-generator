@@ -1,31 +1,21 @@
-const xhr = new XMLHttpRequest();
-xhr.open('GET', 'https://api.chucknorris.io/jokes/random');
-xhr.send();
-xhr.onload = () => {
-  if (xhr.status === 200) {
-    const data = JSON.parse(xhr.responseText);
-    document.querySelector('.joke').innerHTML = data.value;
-  }
-  if (xhr.status === 404) {
-    document.querySelector('.joke').innerHTML = 'Joke not found';
-  }
-  if (xhr.status === 500) {
-    document.querySelector('.joke').innerHTML = 'Server error';
-  }
-  document.querySelector('.btn').addEventListener('click', () => {
-    xhr.open('GET', 'https://api.chucknorris.io/jokes/random');
-    xhr.send();
-    xhr.onload = () => {
-      if (xhr.status === 200) {
-        const data = JSON.parse(xhr.responseText);
-        document.querySelector('.joke').innerHTML = data.value;
+jokeEl = document.getElementById('joke');
+jokeBtn = document.getElementById('joke-btn');
+
+function generateJokes() {
+  const xhr = new XMLHttpRequest();
+
+  xhr.open('GET', 'https://api.chucknorris.io/jokes/random');
+  xhr.onload = function () {
+    if (this.readyState === 4) {
+      if (this.status === 200) {
+        jokeEl.innerHTML = JSON.parse(this.responseText).value;
+      } else {
+        jokeEl.innerHTML = 'Something went wrong';
       }
-      if (xhr.status === 404) {
-        document.querySelector('.joke').innerHTML = 'Joke not found';
-      }
-      if (xhr.status === 500) {
-        document.querySelector('.joke').innerHTML = 'Server error';
-      }
-    };
-  });
-};
+    }
+  };
+  xhr.send();
+}
+
+document.addEventListener('click', generateJokes);
+document.addEventListener('DOMContentLoaded', generateJokes);
